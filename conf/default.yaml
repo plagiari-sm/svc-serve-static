@@ -1,0 +1,7 @@
+name: svc-serve-static
+env: development
+server:
+    port: 8000
+    host: 0.0.0.0
+static-path: /dist # absolute path
+auth-path: /dist
