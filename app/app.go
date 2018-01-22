@@ -11,7 +11,7 @@ import (
 
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
-	"github.com/plagiari-sm/svc-serve-static/conf"
+	psmconfig "github.com/plagiari-sm/psm-config"
 )
 
 // APP ...
@@ -22,22 +22,19 @@ type APP struct {
 
 // Initialize ...
 func (a *APP) Initialize() {
-	cfg := conf.Configuration
+	gin.SetMode(gin.ReleaseMode)
+
+	cfg := psmconfig.Config
 	// Assigin the router
 	a.Router = gin.Default()
 	// Inital router settings
 	a.Router.RedirectTrailingSlash = true
 	a.Router.RedirectFixedPath = true
 
-	a.Router.Static("/static", cfg.StaticPath+"/static")
-	a.Router.LoadHTMLGlob(cfg.StaticPath + "/index.html")
-	a.Router.Use(static.Serve("/", static.LocalFile(cfg.StaticPath, false)))
-	/*
-		a.Router.GET("/", func(c *gin.Context) {
-			c.HTML(http.StatusOK, "index.html", gin.H{})
-		})
-	*/
-	// Forbid Access
+	a.Router.Static("/static", cfg.Static+"/static")
+	a.Router.LoadHTMLGlob(cfg.Static + "/index.html")
+	a.Router.Use(static.Serve("/", static.LocalFile(cfg.Static, false)))
+
 	// This is usefull when you combine multiple microservices
 	a.Router.NoRoute(func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{})
@@ -45,7 +42,7 @@ func (a *APP) Initialize() {
 
 	// Assigin the http server
 	a.Server = &http.Server{
-		Addr:    cfg.Server.Host + ":" + strconv.Itoa(cfg.Server.Port),
+		Addr:    cfg.Host + ":" + strconv.Itoa(cfg.Port),
 		Handler: a.Router,
 	}
 }

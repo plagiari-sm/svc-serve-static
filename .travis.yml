@@ -1,0 +1,30 @@
+sudo: false
+language: go
+go:
+  - 1.7
+  - 1.8
+  - 1.9
+env:
+  global:
+  - VERSION=$(cat VERSION)
+before_script:
+  - go get -t -v ./...
+script:
+  - go vet ./...
+before_deploy:
+  - mkdir -p release
+  - GOOS=linux  GOARCH=amd64 go build -o release/serve-static-$VERSION-linux-amd64
+  - GOOS=darwin GOARCH=amd64 go build -o release/serve-static-$VERSION-darwin-amd64
+  - GOOS=windows GOARCH=amd64 go build -o release/serve-static-$VERSION-windows-amd64
+deploy:
+  overwrite: true
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: ""
+  file:
+    - release/serve-static-$VERSION-linux-amd64
+    - release/serve-static-$VERSION-darwin-amd64
+    - release/serve-static-$VERSION-windows-amd64
+  on:
+    tags: true

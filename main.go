@@ -1,12 +1,12 @@
 package main
 
 import (
+	psmconfig "github.com/plagiari-sm/psm-config"
 	"github.com/plagiari-sm/svc-serve-static/app"
-	"github.com/plagiari-sm/svc-serve-static/conf"
 )
 
 func init() {
-	conf.NewConf()
+	psmconfig.NewConfig()
 }
 
 func main() {
