@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strconv"
 	"syscall"
 
 	"github.com/gin-contrib/static"
+	"github.com/gin-gonic/contrib/jwt"
 	"github.com/gin-gonic/gin"
 	psmconfig "github.com/plagiari-sm/psm-config"
 )
@@ -33,6 +33,8 @@ func (a *APP) Initialize() {
 
 	a.Router.Static("/static", cfg.Static+"/static")
 	a.Router.LoadHTMLGlob(cfg.Static + "/index.html")
+
+	a.Router.Use(jwt.Auth(cfg.Hash))
 	a.Router.Use(static.Serve("/", static.LocalFile(cfg.Static, false)))
 
 	// This is usefull when you combine multiple microservices
@@ -42,7 +44,7 @@ func (a *APP) Initialize() {
 
 	// Assigin the http server
 	a.Server = &http.Server{
-		Addr:    cfg.Host + ":" + strconv.Itoa(cfg.Port),
+		Addr:    ":8000",
 		Handler: a.Router,
 	}
 }
