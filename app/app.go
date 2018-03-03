@@ -31,14 +31,14 @@ func (a *APP) Initialize() {
 	a.Router.RedirectTrailingSlash = true
 	a.Router.RedirectFixedPath = true
 
-	a.Router.Static("/static", cfg.Static+"/static")
-	a.Router.LoadHTMLGlob(cfg.Static + "/index.html")
+	a.Router.Static("/"+cfg.HTMLPaths.Static, cfg.HTMLPaths.Serve+"/static")
+	a.Router.LoadHTMLGlob(cfg.HTMLPaths.Serve + "/index.html")
 
 	if cfg.Hash != "" {
 		a.Router.Use(jwt.Auth(cfg.Hash))
 	}
 
-	a.Router.Use(static.Serve("/", static.LocalFile(cfg.Static, false)))
+	a.Router.Use(static.Serve("/", static.LocalFile(cfg.HTMLPaths.Serve, true)))
 
 	// This is usefull when you combine multiple microservices
 	a.Router.NoRoute(func(c *gin.Context) {
