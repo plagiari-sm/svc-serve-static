@@ -34,7 +34,10 @@ func (a *APP) Initialize() {
 	a.Router.Static("/static", cfg.Static+"/static")
 	a.Router.LoadHTMLGlob(cfg.Static + "/index.html")
 
-	a.Router.Use(jwt.Auth(cfg.Hash))
+	if cfg.Hash != "" {
+		a.Router.Use(jwt.Auth(cfg.Hash))
+	}
+
 	a.Router.Use(static.Serve("/", static.LocalFile(cfg.Static, false)))
 
 	// This is usefull when you combine multiple microservices
